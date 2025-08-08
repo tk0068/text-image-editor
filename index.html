@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>テキスト・画像編集アプリ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="sidebar">
+            <h1>編集アプリ</h1>
+            <nav class="sidebar-nav">
+                <button id="textTab" class="nav-item active">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-text">テキスト編集</span>
+                </button>
+                <button id="imageTab" class="nav-item">
+                    <span class="nav-icon">🖼️</span>
+                    <span class="nav-text">画像編集</span>
+                </button>
+            </nav>
+        </div>
+        
+        <div class="main-content">
+
+        <div id="textContent" class="tab-content active">
+            <div class="input-section">
+                <textarea 
+                    id="inputText" 
+                    placeholder="ここにテキストを入力してください..."
+                    rows="6"
+                ></textarea>
+            </div>
+
+            <div class="function-section">
+                <div class="function-buttons">
+                    <button id="passwordBtn" class="function-btn">パスワード生成</button>
+                    <button id="uppercaseBtn" class="function-btn">大文字変換</button>
+                    <button id="lowercaseBtn" class="function-btn">小文字変換</button>
+                    <button id="guidBtn" class="function-btn">GUID生成</button>
+                    <button id="unicodeBtn" class="function-btn">Unicode変換</button>
+                </div>
+                
+                <div id="passwordOptions" class="options-panel" style="display: none;">
+                    <label>
+                        文字数: <input type="number" id="passwordLength" min="4" max="50" value="12">
+                    </label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" id="includeUpper" checked> 英大文字</label>
+                        <label><input type="checkbox" id="includeLower" checked> 英小文字</label>
+                        <label><input type="checkbox" id="includeNumbers" checked> 数字</label>
+                        <label><input type="checkbox" id="includeSymbols"> 記号</label>
+                    </div>
+                </div>
+                
+                <div id="unicodeOptions" class="options-panel" style="display: none;">
+                    <div class="radio-group">
+                        <label><input type="radio" name="unicodeMode" value="encode" checked> エンコード（テキスト → \u形式）</label>
+                        <label><input type="radio" name="unicodeMode" value="decode"> デコード（\u形式 → テキスト）</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="output-section">
+                <div class="output-header">
+                    <h3 id="outputTitle">結果</h3>
+                    <button id="copyBtn" class="copy-btn" disabled>コピー</button>
+                </div>
+                <textarea 
+                    id="outputText" 
+                    readonly
+                    placeholder="結果がここに表示されます"
+                    rows="6"
+                ></textarea>
+            </div>
+        </div>
+
+        <div id="imageContent" class="tab-content">
+            <div class="image-upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-text">
+                        <p>画像をドラッグ＆ドロップまたはクリックして選択</p>
+                        <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                        <button id="selectImageBtn" class="select-btn">画像を選択</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="image-function-section">
+                <div class="function-buttons">
+                    <button id="resizeBtn" class="function-btn">リサイズ</button>
+                    <button id="compressBtn" class="function-btn">圧縮</button>
+                    <button id="cropBtn" class="function-btn">トリミング</button>
+                    <button id="mosaicBtn" class="function-btn">モザイク</button>
+                </div>
+                
+                <div id="resizeOptions" class="options-panel" style="display: none;">
+                    <label>
+                        幅: <input type="number" id="resizeWidth" min="1" placeholder="400">
+                    </label>
+                    <label>
+                        高さ: <input type="number" id="resizeHeight" min="1" placeholder="300">
+                    </label>
+                    <label><input type="checkbox" id="keepAspectRatio" checked> 縦横比を維持</label>
+                    <button id="applyResize" class="select-btn" style="margin-top: 10px;">リサイズ適用</button>
+                </div>
+                
+                <div id="cropOptions" class="options-panel" style="display: none;">
+                    <div class="crop-instructions">
+                        画像をクリック&ドラッグしてトリミング範囲を選択してください<br>
+                        <small>選択した範囲だけが残ります</small>
+                    </div>
+                </div>
+                
+                <div id="compressOptions" class="options-panel" style="display: none;">
+                    <label>
+                        品質: <input type="range" id="quality" min="0.1" max="1" step="0.1" value="0.8">
+                        <span id="qualityValue">80%</span>
+                    </label>
+                </div>
+                
+                <div id="mosaicOptions" class="options-panel" style="display: none;">
+                    <label>
+                        モザイクサイズ: <input type="range" id="mosaicSize" min="1" max="10" value="3">
+                        <span id="mosaicSizeValue">3px</span>
+                    </label>
+                    <div class="mosaic-instructions">
+                        画像をクリック&ドラッグしてモザイク範囲を選択してください<br>
+                        <small>複数の範囲に連続してモザイクを適用できます</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="image-preview-section">
+                <div class="preview-header">
+                    <h3>プレビュー</h3>
+                    <button id="downloadBtn" class="copy-btn" disabled>ダウンロード</button>
+                </div>
+                <div class="preview-container">
+                    <div class="canvas-container">
+                        <canvas id="imageCanvas" style="display: none;"></canvas>
+                        <div id="selectionOverlay" class="selection-overlay"></div>
+                    </div>
+                    <div id="previewPlaceholder" class="preview-placeholder">
+                        画像を選択すると、ここにプレビューが表示されます
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
