@@ -11,6 +11,7 @@ class AppManager {
         this.outputText = document.getElementById('outputText');
         this.outputTitle = document.getElementById('outputTitle');
         this.copyBtn = document.getElementById('copyBtn');
+        this.charCount = document.getElementById('charCount');
         
         this.passwordBtn = document.getElementById('passwordBtn');
         this.uppercaseBtn = document.getElementById('uppercaseBtn');
@@ -78,7 +79,10 @@ class AppManager {
         this.guidBtn.addEventListener('click', () => this.setFunction('guid'));
         this.unicodeBtn.addEventListener('click', () => this.setFunction('unicode'));
         
-        this.inputText.addEventListener('input', () => this.processText());
+        this.inputText.addEventListener('input', () => {
+            this.updateCharCount();
+            this.processText();
+        });
         this.copyBtn.addEventListener('click', () => this.copyToClipboard());
         
         this.passwordLength.addEventListener('input', () => this.processText());
@@ -732,13 +736,18 @@ class AppManager {
         notification.className = 'notification';
         notification.textContent = message;
         document.body.appendChild(notification);
-        
+
         setTimeout(() => notification.classList.add('show'), 100);
-        
+
         setTimeout(() => {
             notification.classList.remove('show');
             setTimeout(() => document.body.removeChild(notification), 300);
         }, 2000);
+    }
+
+    updateCharCount() {
+        const count = this.inputText.value.length;
+        this.charCount.textContent = `${count}文字`;
     }
 }
 
